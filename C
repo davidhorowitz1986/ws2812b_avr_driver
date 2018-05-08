@@ -29,10 +29,13 @@ int main(void)
 
     while (1) 
     {
+    		 
+    		 //sendPixel(pixel #, Green 0-255, Red 0-255, Blue 0-255)
+		 
 		int i;		
 		for(i=1; i<=16; i++)
 		{
-		sendPixel(i, 50, 0, 0);
+		sendPixel(i, 50, 0, 0);   
 		_delay_ms(50);
 		}
 		for(i=1; i<=16; i++)
