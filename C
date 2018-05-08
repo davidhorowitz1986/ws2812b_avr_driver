@@ -1,0 +1,111 @@
+/*
+ * ws2812b_driver.c
+ *
+ *For AVRs
+ *
+ * Created: 5/4/2018 10:58:33 AM
+ * Author : David F. Horowitz 
+ */ 
+
+#define F_CPU 8000000	//set clock speed here and in programing 
+#include <avr/io.h>
+#include <util/delay.h>
+void transmitBit(unsigned char);
+void sendPixel(unsigned char pixelNum, unsigned char G, unsigned char R , unsigned char B);
+unsigned char pixelBinaryArray[24];
+
+
+//---------USER DEFINITIONS------------------------------------------------------------------------------
+	unsigned char outputArray[16*24]; //number of LEDs in strip * 24
+	unsigned char dataPin = 0b00001000;	//set the pin where the first ws2812b in the chain is connected   
+//-------------------------------------------------------------------------------------------------------
+
+
+int main(void)
+{
+	 
+	DDRB = dataPin;  //change the DDRx as needed on other AVRs 
+	
+
+    while (1) 
+    {
+		int i;		
+		for(i=1; i<=16; i++)
+		{
+		sendPixel(i, 50, 0, 0);
+		_delay_ms(50);
+		}
+		for(i=1; i<=16; i++)
+		{
+			sendPixel(i, 0, 50, 0);
+			_delay_ms(50);
+		}
+		for(i=1; i<=16; i++)
+		{
+			sendPixel(i, 0, 0, 50);
+			_delay_ms(50);
+		}
+		
+		
+		
+    }
+}
+
+void transmitBit(unsigned char Bit) //function to send bit types (DO NOT ALTER) 
+{
+	if(Bit == 1) //send 1 pattern
+	{
+		PORTB = dataPin;
+		_delay_us(0.7);
+		PORTB = dataPin & ~dataPin;
+		_delay_us(0.6);
+	}
+	else if(Bit == 0) //send 0 pattern
+	{
+		PORTB = dataPin;
+		_delay_us(0.35);
+		PORTB = dataPin & ~dataPin;
+		_delay_us(0.8);
+	}
+	else  //send reset pattern 
+	{
+		PORTB = dataPin & ~dataPin;
+		_delay_us(50);
+	}
+}
+
+void sendPixel(unsigned char pixelNum, unsigned char G, unsigned char R, unsigned char B) //function to output signal (DO NOT ALTER) 
+{
+	int i;
+	//convert G, R, and B to binary numbers and store in pixelBinaryArray[]
+	for(i = 23; i>=16; i--)
+	{
+		pixelBinaryArray[i] = G%2;
+		G = G/2;
+	}
+	for(i = 15; i>7; i--)
+	{
+		pixelBinaryArray[i] = R%2;
+		R = R/2;
+	}
+	for(i = 7; i>=0; i--)
+	{
+		pixelBinaryArray[i] = B%2;
+		B = B/2;
+	}
+	
+		for(i = 23; i>=0; i--)
+		{
+			outputArray[((pixelNum-1)*24)+i] = pixelBinaryArray[i];
+		}
+		
+		for(i = sizeof(outputArray); i>=0; i--)
+		{
+				transmitBit(outputArray[i]);
+		}
+} 
+
+
+
+
+
