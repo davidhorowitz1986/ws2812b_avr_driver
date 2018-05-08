@@ -15,16 +15,16 @@ void sendPixel(unsigned char pixelNum, unsigned char G, unsigned char R , unsign
 unsigned char pixelBinaryArray[24];
 
 
-//---------USER DEFINITIONS------------------------------------------------------------------------------
-	unsigned char outputArray[16*24]; //number of LEDs in strip * 24
-	unsigned char dataPin = 0b00001000;	//set the pin where the first ws2812b in the chain is connected   
-//-------------------------------------------------------------------------------------------------------
+//---------USER DEFINITIONS-------------------------------------------------------------------------------------------------------
+	unsigned char outputArray[16*24]; 	//number of LEDs in strip * 24
+	unsigned char dataPin = 0b00001000;	//set the pin where the first ws2812b in the chain is connected on approriate port  
+//--------------------------------------------------------------------------------------------------------------------------------
 
 
 int main(void)
 {
 	 
-	DDRB = dataPin;  //change the DDRx as needed on other AVRs 
+	DDRB = dataPin;  //change the DDRx as needed for your chip  
 	
 
     while (1) 
